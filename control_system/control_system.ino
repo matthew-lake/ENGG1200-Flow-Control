@@ -103,31 +103,49 @@ void loop(void)
     if (error > 0)
     {
       int change = (error*error)/25;
-      for(int pos = servoAPos; pos < servoAPos - change; pos -= 1)  // goes from 0 degrees to 180 degrees 
+      for(int pos = servoAPos; pos > servoAPos - change; pos -= 1)  // goes from 0 degrees to 180 degrees 
       {                                  // in steps of 1 degree 
         servoA.write(pos);              // tell servo to go to position in variable 'pos'
         servoAPos = pos;
         delay(20);
       }
+      if (ServoBPos < 90)
+      {
+        for(int pos = servoBPos; pos < servoBPos + change; pos += 1)  // goes from 0 degrees to 180 degrees 
+        {                                  // in steps of 1 degree 
+          servoB.write(pos);              // tell servo to go to position in variable 'pos'
+          servoBPos = pos;
+          delay(20);
+        }
+      }
     }
     if (error < 0)
     {
       int change = (error*error)/25;
-      for(int pos = servoBPos; pos < servoBPos - change; pos -= 1)  // goes from 0 degrees to 180 degrees 
+      for(int pos = servoBPos; pos > servoBPos - change; pos -= 1)  // goes from 0 degrees to 180 degrees 
       {                                  // in steps of 1 degree 
         servoB.write(pos);              // tell servo to go to position in variable 'pos'
         servoBPos = pos;
         delay(20);
       }
+      if (ServoAPos < 90)
+      {
+        for(int pos = servoAPos; pos < servoAPos + change; pos += 1)  // goes from 0 degrees to 180 degrees 
+        {                                  // in steps of 1 degree 
+          servoA.write(pos);              // tell servo to go to position in variable 'pos'
+          servoAPos = pos;
+          delay(20);
+        }
+      }
     }
   }
-  for(int pos = servoAPos; pos = 0; pos -= 1)  // goes from 0 degrees to 180 degrees 
+  for(int pos = servoAPos; pos > 0; pos -= 1)  // goes from 0 degrees to 180 degrees 
   {                                  // in steps of 1 degree 
     servoA.write(pos);              // tell servo to go to position in variable 'pos'
     servoAPos = pos;
     delay(20); 
   }
-  for(int pos = servoBPos; pos = 0; pos -= 1)  // goes from 0 degrees to 180 degrees 
+  for(int pos = servoBPos; pos > 0; pos -= 1)  // goes from 0 degrees to 180 degrees 
   {                                  // in steps of 1 degree 
     servoB.write(pos);              // tell servo to go to position in variable 'pos'
     servoBPos = pos;
