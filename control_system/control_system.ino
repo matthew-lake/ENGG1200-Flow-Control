@@ -18,12 +18,15 @@
 #define SERVO_B 8
 
 #define TARGET_TEMP_A 45
-#define TARGET_TEMP_B 45
+#define TARGET_TEMP_B 15
 
 Adafruit_MAX31855 thermocouple(CLK, CS, DO);
 
 Servo servoA;
 Servo servoB;
+
+int servoAPos = 0;
+int servoBPos = 0;
  
 // Setup a oneWire instance to communicate with any OneWire devices 
 // (not just Maxim/Dallas temperature ICs)
@@ -45,6 +48,9 @@ void setup(void)
   
   servoA.attach(SERVO_A);
   servoB.attach(SERVO_B);
+  
+  servoA.write(0);
+  servoB.write(0);
 }
  
 void loop(void)
@@ -61,11 +67,71 @@ void loop(void)
     sensorsB.requestTemperatures(); // Send the command to get temperatures
     double inTempA = sensorsA.getTempCByIndex(0);
     double inTempB = sensorsB.getTempCByIndex(0);
+    Serial.println("ts A");
+    Serial.println(inTempA);
+    Serial.println("ts B");
+    Serial.println(inTempB);
     
     double c = thermocouple.readCelsius();
-     if (!isnan(c)) {
-       double outTemp = c;
-     }
+    double outTemp = c;
+    Serial.println("tc");
+    Serial.println(outTemp);
+    
+    double error = outTemp - targetTemp;
+    Serial.println("Error");
+    Serial.println(error);
+    
+    if (abs(inTempA - targetTemp) < abs(inTempB - targetTemp))
+    {
+      for(int pos = servoAPos; pos < 90; pos += 1)  // goes from 0 degrees to 180 degrees 
+      {                                  // in steps of 1 degree 
+        servoA.write(pos);              // tell servo to go to position in variable 'pos'
+        servoAPos = pos;
+        delay(20); 
+      }
+    }
+    else
+    {
+      for(int pos = servoBPos; pos < 90; pos += 1)  // goes from 0 degrees to 180 degrees 
+      {                                  // in steps of 1 degree 
+        servoB.write(pos);              // tell servo to go to position in variable 'pos'
+        servoBPos = pos;
+        delay(20);
+      }
+    }
+    
+    if (error > 0)
+    {
+      int change = (error*error)/25;
+      for(int pos = servoAPos; pos < servoAPos - change; pos -= 1)  // goes from 0 degrees to 180 degrees 
+      {                                  // in steps of 1 degree 
+        servoA.write(pos);              // tell servo to go to position in variable 'pos'
+        servoAPos = pos;
+        delay(20);
+      }
+    }
+    if (error < 0)
+    {
+      int change = (error*error)/25;
+      for(int pos = servoBPos; pos < servoBPos - change; pos -= 1)  // goes from 0 degrees to 180 degrees 
+      {                                  // in steps of 1 degree 
+        servoB.write(pos);              // tell servo to go to position in variable 'pos'
+        servoBPos = pos;
+        delay(20);
+      }
+    }
+  }
+  for(int pos = servoAPos; pos = 0; pos -= 1)  // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    servoA.write(pos);              // tell servo to go to position in variable 'pos'
+    servoAPos = pos;
+    delay(20); 
+  }
+  for(int pos = servoBPos; pos = 0; pos -= 1)  // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    servoB.write(pos);              // tell servo to go to position in variable 'pos'
+    servoBPos = pos;
+    delay(20); 
   }
 }
 
