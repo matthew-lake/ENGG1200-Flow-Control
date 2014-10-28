@@ -55,6 +55,8 @@ void setup(void)
  
 void loop(void)
 {
+  int ServoAPos = ServoAPos;
+  int ServoBPos = ServoBPos;
   double targetTemp = digitalRead(TARGET_TEMP) ? TARGET_TEMP_A : TARGET_TEMP_B;
   boolean encoder = digitalRead(ENCODER);
   while (!encoder)
@@ -67,19 +69,11 @@ void loop(void)
     sensorsB.requestTemperatures(); // Send the command to get temperatures
     double inTempA = sensorsA.getTempCByIndex(0);
     double inTempB = sensorsB.getTempCByIndex(0);
-    Serial.println("ts A");
-    Serial.println(inTempA);
-    Serial.println("ts B");
-    Serial.println(inTempB);
     
     double c = thermocouple.readCelsius();
     double outTemp = c;
-    Serial.println("tc");
-    Serial.println(outTemp);
     
     double error = outTemp - targetTemp;
-    Serial.println("Error");
-    Serial.println(error);
     
     if (abs(inTempA - targetTemp) < abs(inTempB - targetTemp))
     {
@@ -109,7 +103,7 @@ void loop(void)
         servoAPos = pos;
         delay(20);
       }
-      if (ServoBPos < 90)
+      if (servoBPos < 80)
       {
         for(int pos = servoBPos; pos < servoBPos + change; pos += 1)  // goes from 0 degrees to 180 degrees 
         {                                  // in steps of 1 degree 
@@ -128,7 +122,7 @@ void loop(void)
         servoBPos = pos;
         delay(20);
       }
-      if (ServoAPos < 90)
+      if (ServoAPos < 80)
       {
         for(int pos = servoAPos; pos < servoAPos + change; pos += 1)  // goes from 0 degrees to 180 degrees 
         {                                  // in steps of 1 degree 
